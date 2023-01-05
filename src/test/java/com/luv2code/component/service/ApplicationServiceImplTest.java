@@ -1,9 +1,7 @@
 package com.luv2code.component.service;
 
-import com.luv2code.component.dao.ApplicationDao;
 import com.luv2code.component.dao.impl.ApplicationDaoImpl;
 import com.luv2code.component.models.CollegeStudent;
-import com.luv2code.component.models.Student;
 import com.luv2code.component.models.StudentGrades;
 import com.luv2code.component.service.impl.ApplicationServiceImpl;
 import org.junit.jupiter.api.*;

@@ -2,7 +2,6 @@ package com.luv2code.component.service.impl;
 
 import com.luv2code.component.dao.ApplicationDao;
 import com.luv2code.component.service.ApplicationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

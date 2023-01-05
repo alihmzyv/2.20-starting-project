@@ -11,7 +11,7 @@ import java.util.List;
 public class ApplicationDaoImpl implements ApplicationDao {
 
     public ApplicationDaoImpl() {
-        System.out.println("ApplicationServiceImpl() constructor called.");
+        System.out.println("ApplicationDaoImpl() constructor called.");
     }
 
     public double addGradeResultsForSingleClass(List<Double> grades) {
@@ -35,7 +35,6 @@ public class ApplicationDaoImpl implements ApplicationDao {
     }
 
     public boolean checkNull(Object obj) {
-        if (obj == null) return true;
-        return false;
+        return obj == null;
     }
 }

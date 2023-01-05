@@ -5,8 +5,6 @@ import com.luv2code.component.models.CollegeStudent;
 import com.luv2code.component.models.StudentGrades;
 import com.luv2code.component.service.impl.ApplicationServiceImpl;
 import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +27,7 @@ class ApplicationServiceImplBestApproachTest {
     @Autowired
     private StudentGrades studentGrades;
 
-    @MockBean
+    @MockBean(name = "dao")
     /*
     From docs:
     Mocks can be registered by type or by bean name.
@@ -41,13 +39,11 @@ class ApplicationServiceImplBestApproachTest {
     @Autowired
     private ApplicationServiceImpl service;
 
-    @BeforeAll
-    static void beforeAll() {
-
-    }
-
     @BeforeEach
     void beforeEach() {
+        /*System.out.println("All bean names:");
+        Arrays.stream(context.getBeanDefinitionNames())
+                        .forEach(System.out::println);*/
         studentGrades.setMathGradeResults(List.of(55.5, 55.5, 50.5));
         student.setStudentGrades(studentGrades);
     }
@@ -55,13 +51,13 @@ class ApplicationServiceImplBestApproachTest {
     @Test
     @DisplayName("Test @MockBean Same With Bean By Context") //replaces same type of bean existing
     void testMockBeanSameWithBean() {
-        assertSame(context.getBean("dao", ApplicationDaoImpl.class), mockDao);
+        assertSame(context.getBean(ApplicationDaoImpl.class), mockDao);
     }
 
     @Test
     @DisplayName("Test @Autowired Same With Bean By Context") //replaces the previous bean
     void testAutowiredSameWithBean() {
-        assertSame(context.getBean("service", ApplicationServiceImpl.class), service);
+        assertSame(context.getBean(ApplicationServiceImpl.class), service);
     }
 
 
@@ -72,5 +68,24 @@ class ApplicationServiceImplBestApproachTest {
         assertEquals(161.5, service.addGradeResultsForSingleClass(studentGrades.getMathGradeResults()));
         assertNotEquals(162.5, service.addGradeResultsForSingleClass(studentGrades.getMathGradeResults()));
         verify(mockDao, times(2)).addGradeResultsForSingleClass(student.getStudentGrades().getMathGradeResults());
+    }
+
+    @Test
+    @DisplayName("Test doThrow")
+    void testThrows() {
+        doThrow(new IllegalStateException("Cannot be callled")).when(mockDao).checkNull(null);
+        assertThrowsExactly(IllegalStateException.class, () -> service.checkNull(null));
+        verify(mockDao, times(1)).checkNull(null);
+    }
+
+    @Test
+    @DisplayName("Test Ongoing Stubbing")
+    void testOngoingStubbing() {
+        when(mockDao.checkNull(null))
+                .thenReturn(false)
+                .thenThrow(new IllegalStateException("Cannot pass null in twice."));
+        assertFalse(service.checkNull(null));
+        assertThrowsExactly(IllegalStateException.class, () -> service.checkNull(null));
+        verify(mockDao, times(2)).checkNull(null);
     }
 }
